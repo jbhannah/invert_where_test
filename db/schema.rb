@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_10_004325) do
+ActiveRecord::Schema.define(version: 2021_12_10_012504) do
 
   create_table "foobars", force: :cascade do |t|
     t.datetime "expires_at", precision: 6, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "published", default: false
   end
 
 end

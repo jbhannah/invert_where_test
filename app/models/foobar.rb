@@ -4,6 +4,9 @@ class Foobar < ApplicationRecord
   scope :active, -> { where(expires_at: Time.zone.now..) }
   scope :expired_invert_where, -> { active.invert_where }
 
+  scope :published, -> { where(published: true) }
+  scope :draft_invert_where, -> { published.invert_where }
+
   private
   def set_expires_at
     self.expires_at ||= 30.days.from_now

@@ -48,4 +48,16 @@ class FoobarTest < ActiveSupport::TestCase
       assert_includes Foobar.expired_invert_where, foobar
     end
   end
+
+  test ".published includes only published foobars" do
+    assert Foobar.published.count, 2
+    assert_includes Foobar.published, foobars(:active_published)
+    assert_includes Foobar.published, foobars(:expired_published)
+  end
+
+  test ".draft_invert_where includes only draft foobars" do
+    assert Foobar.draft_invert_where.count, 2
+    assert_includes Foobar.draft_invert_where, foobars(:active_draft)
+    assert_includes Foobar.draft_invert_where, foobars(:expired_draft)
+  end
 end

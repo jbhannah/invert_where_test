@@ -55,6 +55,12 @@ class FoobarTest < ActiveSupport::TestCase
     assert_includes Foobar.active, foobars(:active_draft)
   end
 
+  test ".expired_inverse_of includes only expired foobars" do
+    assert Foobar.expired_inverse_of.count, 2
+    assert_includes Foobar.expired_inverse_of, foobars(:expired_published)
+    assert_includes Foobar.expired_inverse_of, foobars(:expired_draft)
+  end
+
   test ".expired_invert_where includes only expired foobars" do
     assert Foobar.expired_invert_where.count, 2
     assert_includes Foobar.expired_invert_where, foobars(:expired_published)
@@ -65,6 +71,12 @@ class FoobarTest < ActiveSupport::TestCase
     assert Foobar.published.count, 2
     assert_includes Foobar.published, foobars(:active_published)
     assert_includes Foobar.published, foobars(:expired_published)
+  end
+
+  test ".draft_inverse_of includes only draft foobars" do
+    assert Foobar.draft_inverse_of.count, 2
+    assert_includes Foobar.draft_inverse_of, foobars(:active_draft)
+    assert_includes Foobar.draft_inverse_of, foobars(:expired_draft)
   end
 
   test ".draft_invert_where includes only draft foobars" do

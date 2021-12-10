@@ -1,24 +1,31 @@
-# README
+# Testing `#invert_where` vs. explicit scope inversion
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+[`#invert_where`][iw] inverts _all_ preceding `#where` clauses in an
+ActiveRecord query chain, including those contained within scopes. Instead,
+retrieving and inverting the [`Arel::SelectManager#constraints`][constr] of
+just the desired scope allows for order-independent scope chaining without
+side effects.
 
-Things you may want to cover:
+Given the scopes defined in the`Foobar` model:
 
-* Ruby version
+```ruby
+Foobar.active.published
+# SELECT "foobars".* FROM "foobars" WHERE "foobars"."expires_at" >= '2021-12-10 04:21:48.044576' AND "foobars"."published" = 1
 
-* System dependencies
+Foobar.published.active
+# SELECT "foobars".* FROM "foobars" WHERE "foobars"."published" = 1 AND "foobars"."expires_at" >= '2021-12-10 04:21:48.044576'
 
-* Configuration
+Foobar.expired_inverse_of.published
+# SELECT "foobars".* FROM "foobars" WHERE NOT ("foobars"."expires_at" >= '2021-12-10 04:21:48.044576') AND "foobars"."published" = 1
 
-* Database creation
+Foobar.published.expired_inverse_of
+# SELECT "foobars".* FROM "foobars" WHERE "foobars"."published" = 1 AND NOT ("foobars"."expires_at" >= '2021-12-10 04:21:48.044576')
 
-* Database initialization
+Foobar.expired_invert_where.published
+# SELECT "foobars".* FROM "foobars" WHERE "foobars"."expires_at" < '2021-12-10 04:21:48.044576' AND "foobars"."published" = 1
 
-* How to run the test suite
+Foobar.published.expired_invert_where
+# SELECT "foobars".* FROM "foobars" WHERE NOT ("foobars"."published" = 1 AND "foobars"."expires_at" >= '2021-12-10 04:21:48.044576')
+```
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+[iw]: https://edgeapi.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-invert_where

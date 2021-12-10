@@ -24,21 +24,21 @@ class FoobarTest < ActiveSupport::TestCase
   test "is not .active if the timestamp is in the past" do
     foobar = Foobar.first
     travel_to 1.minute.after(foobar.expires_at) do
-      assert (not Foobar.active.include?(foobar))
+      refute_includes Foobar.active, foobar
     end
   end
 
   test "is not .expired_invert_where if the timestamp is in the future" do
     foobar = Foobar.first
     travel_to 1.minute.before(foobar.expires_at) do
-      assert (not Foobar.expired_invert_where.include?(foobar))
+      refute_includes Foobar.expired_invert_where, foobar
     end
   end
 
   test "is not .expired_invert_where if the timestamp is now" do
     foobar = Foobar.first
     travel_to foobar.expires_at do
-      assert (not Foobar.expired_invert_where.include?(foobar))
+      refute_includes Foobar.expired_invert_where, foobar
     end
   end
 
